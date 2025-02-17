@@ -1,0 +1,22 @@
+PREFIJO: +pvp (o cualquiera)
+
+$nomention
+$onlyIf[$mentioned[1]!=;❌ | Menciona a un usuario]
+$onlyIf[$mentioned[1]!=$authorID;❌ | No podés jugar contra vos mismo]
+$jsonParse[$getUserVar[pvp]]
+$onlyIf[$json[juego]==;❌ | Ya tienes un juego activo $json[juego]]
+$jsonSetString[con;$authorID-$mentioned[1]]
+$jsonSetString[turno;$mentioned[1]]
+$setUserVar[pvp;$jsonStringify]
+$setUserVar[pvp;$jsonStringify;$mentioned[1]]
+$title[⚔️ | PVP - NexupArena]
+$description[
+<@$mentioned[1]> te han retado a un PVP a muerte ☠️
+
+**Datos del juego:**
+🏳️ | Toca el botón de la bandera para rendirte
+🎯 | 20% de dar un crítico
+☠️ | 10% de fallar un ataque y perder vida
+🛡️ | Activa un escudo para protegerte del siguiente ataque]
+$color[6e00ff]
+$addButton[no;ata-$mentioned[1];Aceptar;success;no;☠️;]
