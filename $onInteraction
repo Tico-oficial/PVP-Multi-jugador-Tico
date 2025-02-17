@@ -112,7 +112,7 @@ $var[g;$var[j2]]
 $else
 $var[g;$var[j1]]
 $endif
-$var[msj;🏳️ | $nickname[$authorID] $randomText[se rindió;creé que su oponente es más fuerte y decide rendirse;no quiere problemas, así que se retira;se ha asustado y ha salido corriendo]]
+$var[msj;**🏳️ | $nickname[$authorID]** $randomText[se rindió;creé que su oponente es más fuerte y decide rendirse;no quiere problemas, así que se retira;se ha asustado y ha salido corriendo]]
 $var[msj2;> - <@$var[g]> ganó el PVP 🥳]
 $endif
 $jsonSetString[turno;$var[nt]]
