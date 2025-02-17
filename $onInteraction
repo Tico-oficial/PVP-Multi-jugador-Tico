@@ -1,0 +1,148 @@
+PREFIJO: $onInteraction
+
+$nomention
+$onlyIf[$or[$customID==c-pvp;$customID==def-$authorID;$customID==ata-$authorID]==true;]
+$jsonParse[$getUserVar[pvp]]
+$if[$json[juego]!=]
+$textSplit[$json[juego];/]
+$onlyIf[$splitText[7]==$messageID;❌ | Ya tienes un juego activo $json[juego]]
+$else
+$jsonSetString[juego;https://discord.com/channels/$guildID/$channelID/$messageID]
+$endif
+$textSplit[$json[con];-]
+$var[j1;$splitText[1]]
+$var[j2;$splitText[2]]
+
+$if[$json[turno]==$var[j1]]
+$var[t;$var[j1]]
+$var[nt;$var[j2]]
+$var[id;2]
+$var[id-yo;1]
+$elseif[$json[turno]==$var[j2]]
+$var[t;$var[j2]]
+$var[nt;$var[j1]]
+$var[id;1]
+$var[id-yo;2]
+$elseif[$or[$authorID==$var[j1];$authorID==$var[j2]]==true]
+$else
+$stop
+$endif
+$removeAllComponents
+$if[$customID==ata-$authorID]
+
+$if[$json[d$var[id]]==No]
+$if[$random[0;100]>=11]
+$if[$optOff[$random[0;100]]>=21]
+$var[daño;$random[1;20]]
+$var[msj;🗡️ | **$nickname[$var[t]]** $randomText[golpea a su oponente;ataca;no tiene miedo, ataca] y le quitó **-$var[daño]** de vida a **$nickname[$var[nt]]**]
+$jsonSetString[v$var[id];$sub[$json[v$var[id]];$var[daño]]]
+$else
+$var[daño;$random[20;45]]
+$var[msj;🎯 | **$nickname[$var[t]]** $randomText[le dió un crítico;destroza a su oponente;es mucho más fuerte que su oponente] y le quita **-$var[daño]** de vida a **$nickname[$var[nt]]**]
+$jsonSetString[v$var[id];$sub[$json[v$var[id]];$var[daño]]]
+$endif
+$else
+$var[daño;$random[1;10]]
+$var[msj;☠️ | $randomText[Fracasa en el ataque, su oponente le demuestra como se hace;El ataque salió mal;El tiro le salió por la culata;La suerte no ha estado de su lado] y **$nickname[$var[t]]** perdió **-$var[daño]** de vida]
+$jsonSetString[v$var[id-yo];$sub[$json[v$var[id-yo]];$var[daño]]]
+$endif
+$else
+$var[msj;🛡️ | **$nickname[$var[nt]]** $randomText[tenía escudo;esquivó el ataque;fué mas ágil que su oponente y se defiende exitosamente]]
+$jsonSetString[d$var[id];No]
+$endif
+
+$if[$and[$json[v1]>1;$json[v2]<=0]==true]
+$var[msj2;> - 😎 | <@$var[j1]> ganó la ronda $json[r]
+> - Turno de: <@$var[nt]>]
+$jsonSetString[r;$sum[$json[r];1]]
+$jsonSetString[j1-v;$sum[$json[j1-v];1]]
+$jsonSetString[v1;100]
+$jsonSetString[v2;100]
+$elseif[$and[$json[v2]>1;$json[v1]<=0]==true]
+$var[msj2;> - 😎 | <@$var[j2]> ganó la ronda $json[r]
+> - Turno de: <@$var[nt]>]
+$jsonSetString[r;$sum[$json[r];1]]
+$jsonSetString[j2-v;$sum[$json[j2-v];1]]
+$jsonSetString[v1;100]
+$jsonSetString[v2;100]
+$else
+$var[msj2;> - Turno de: <@$var[nt]>]
+$endif
+
+$if[$and[$json[j1-v]==2;$json[j2-v]==0]==true]
+$var[ter;si]
+$elseif[$and[$json[j2-v]==2;$json[j1-v]==0]==true]
+$var[ter;si]
+$endif
+
+$if[$or[$json[r]>3;$var[ter]==si]==true]
+$title[⚔️ | PVP - NexupArena]
+$description[**🥊 | Ronda:** ``3 ($json[j1-v] - $json[j2-v])``
+
+> - $var[msj] 
+$replaceText[$replaceText[$checkCondition[$json[j1-v]>$json[j2-v]];true;> - <@$var[j1]> ganó el PVP 🥳;1];false;> - <@$var[j2]> ganó el PVP 🥳;1]
+
+```js
+$nickname[$var[j1]]
+♥️ | Vida: $json[v1]/100
+🛡️ | Escudo: $json[d1]
+
+$nickname[$var[j2]]
+♥️ | Vida: $json[v2]/100
+🛡️ | Escudo: $json[d2]
+```]
+$color[6e00ff]
+$footer[By tico.oficial]
+$var[reset;si]
+$else
+$var[tico;si]
+$endif
+
+$elseif[$customID==def-$authorID]
+
+$jsonSetString[d$var[id-yo];Sí]
+$var[tico;si]
+$var[msj;**🛡️ | $nickname[$var[t]]** $randomText[activó su escudo;decide ocultarse detrás del escudo;no quiere problemas y opta por un escudo]]
+$var[msj2;> - Turno de: <@$var[nt]>]
+$elseif[$customID==c-pvp]
+$var[reset;si]
+$var[tico;r]
+$if[$authorID==$var[j1]]
+$var[g;$var[j2]]
+$else
+$var[g;$var[j1]]
+$endif
+$var[msj;🏳️ | $nickname[$authorID] $randomText[se rindió;creé que su oponente es más fuerte y decide rendirse;no quiere problemas, así que se retira;se ha asustado y ha salido corriendo]]
+$var[msj2;> - <@$var[g]> ganó el PVP 🥳]
+$endif
+$jsonSetString[turno;$var[nt]]
+$if[$or[$var[tico]==r;$var[tico]==si]==true]
+$title[⚔️ | PVP - NexupArena]
+$description[**🥊 | Ronda:** ``$json[r] ($json[j1-v] - $json[j2-v])``
+
+> - $var[msj] 
+$var[msj2]
+
+```js
+$nickname[$var[j1]]
+♥️ | Vida: $json[v1]/100
+🛡️ | Escudo: $json[d1]
+
+$nickname[$var[j2]]
+♥️ | Vida: $json[v2]/100
+🛡️ | Escudo: $json[d2]
+```]
+$color[6e00ff]
+$footer[By tico.oficial]
+$if[$var[tico]!=r]
+$addButton[no;ata-$json[turno];Atacar;success;no;🗡️;]
+$addButton[no;def-$json[turno];Escudo;success;no;🛡️;]
+$addButton[no;c-pvp;;secondary;no;🏳️;]
+$endif
+$endif
+$setUserVar[pvp;$jsonStringify;$var[j1]]
+$setUserVar[pvp;$jsonStringify;$var[j2]]
+$if[$var[reset]==si]
+$resetUserVar[pvp;$var[j1]]
+$resetUserVar[pvp;$var[j2]]
+$endif
